@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Queue from "./../components/ts/Task/Queue";
 import Stack from "./../components/ts/Task/Stack";
-import { computed, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import type Operation from "./../components/ts/Command/interface/Operation";
 
 enum AttachType {
@@ -37,6 +37,9 @@ const stacks = computed(() => {
   return form.stack.Get();
 });
 
+const sleep = (waitTime: number) =>
+  new Promise((resolve) => setTimeout(resolve, waitTime));
+
 const OnCommandEnter = () => {
   console.log(`Enter ${form.attachOf.toString()}`);
 
@@ -51,6 +54,19 @@ const OnCommandEnter = () => {
   console.log(form.queue);
   console.log(form.stack);
 };
+
+const main = async () => {
+  console.log("mail");
+
+  while (true) {
+    await sleep(1000);
+    console.log("loop");
+  }
+};
+
+onMounted(() => {
+  main();
+});
 </script>
 
 <template>
