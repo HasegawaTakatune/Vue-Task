@@ -52,7 +52,7 @@ export default class Command {
         const list = cmd.split('=');
         if (list.length < 2) return null;
 
-        const opt = /^[0-9]{2}$/;
+        const opt = /^[0-9]{2}(px|em|rem)$/;
         if (!opt.test(list[1])) return null;
 
         return list[1];
@@ -61,7 +61,7 @@ export default class Command {
     private static ValidateMessage(cmd: string): string | null {
         const command = /^[m|M]essage/;
 
-        if (!command.test(cmd)) return null;
+        if (!command.test(cmd)) return 'None';
 
         const list = cmd.split('=');
         if (list.length < 2 && list[1].length < 30) return null;
