@@ -4,17 +4,12 @@ import { computed, onMounted, reactive, ref } from "vue";
 import Queue from "./../components/ts/Task/Queue";
 import Stack from "./../components/ts/Task/Stack";
 import type Operation from "./../components/ts/Command/interface/Operation";
-
-enum AttachType {
-  BOTH,
-  QUEUE,
-  STACK,
-  LENGTH,
-}
+import type Form from "./interface/Form";
+import { AttachType } from "./enum/AttachType";
 
 const inputCommand = ref();
 
-const form = reactive({
+const form = reactive(<Form>{
   queue: new Queue(),
   stack: new Stack(),
 
@@ -39,8 +34,6 @@ const stacks = computed(() => {
 });
 
 const OnCommandEnter = () => {
-  console.log(`Enter ${form.attachOf.toString()}`);
-
   if (form.attachOf === AttachType.QUEUE || form.attachOf === AttachType.BOTH) {
     form.queue.Push(form.command);
   }
@@ -48,9 +41,6 @@ const OnCommandEnter = () => {
   if (form.attachOf === AttachType.STACK || form.attachOf === AttachType.BOTH) {
     form.stack.Push(form.command);
   }
-
-  console.log(form.queue);
-  console.log(form.stack);
 };
 
 const SetDefault = () => {
@@ -69,21 +59,14 @@ const sleep = (waitTime: number) =>
   new Promise((resolve) => setTimeout(resolve, waitTime));
 
 const main = async () => {
-  console.log("mail");
-
   while (true) {
     await sleep(10 * 1000);
 
     const commandQueue = form.queue.Pop();
     const commandStack = form.stack.Pop();
 
-    console.log("Queue", commandQueue);
-    console.log("Stack", commandStack);
-
     if (commandQueue) form.nowQueue = commandQueue;
     if (commandStack) form.nowStack = commandStack;
-
-    console.log("loop");
   }
 };
 
