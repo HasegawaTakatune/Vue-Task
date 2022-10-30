@@ -52,7 +52,7 @@ export default class Command {
         const list = cmd.split('=');
         if (list.length < 2) return null;
 
-        const opt = /^[0-9]{2}(px|em|rem)$/;
+        const opt = /^[0-9]{1,2}(px|em|rem)$/;
         if (!opt.test(list[1])) return null;
 
         return list[1];

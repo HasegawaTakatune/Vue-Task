@@ -3,6 +3,8 @@ import type Operation from "@/components/ts/Command/interface/Operation"
 import type { AttachType } from "../enum/AttachType"
 
 export default interface Form {
+    power: boolean,
+
     queue: Base,
     stack: Base,
 

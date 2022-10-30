@@ -10,6 +10,8 @@ import { AttachType } from "./enum/AttachType";
 const inputCommand = ref();
 
 const form = reactive(<Form>{
+  power: false,
+
   queue: new Queue(),
   stack: new Stack(),
 
@@ -31,6 +33,10 @@ const queues = computed(() => {
 
 const stacks = computed(() => {
   return form.stack.Get();
+});
+
+const power = computed(() => {
+  return form.power ? "Start" : "Stop";
 });
 
 const OnCommandEnter = () => {
@@ -55,6 +61,14 @@ const SetDefault = () => {
   form.command = preset;
 };
 
+const AttachCommand = (base: Operation, attach: Operation): Operation => {
+  return {
+    color: attach.color ?? base.color,
+    fontSize: attach.fontSize ?? base.fontSize,
+    message: attach.message ?? base.message,
+  };
+};
+
 const sleep = (waitTime: number) =>
   new Promise((resolve) => setTimeout(resolve, waitTime));
 
@@ -62,11 +76,15 @@ const main = async () => {
   while (true) {
     await sleep(10 * 1000);
 
+    if (!form.power) continue;
+
     const commandQueue = form.queue.Pop();
     const commandStack = form.stack.Pop();
 
-    if (commandQueue) form.nowQueue = commandQueue;
-    if (commandStack) form.nowStack = commandStack;
+    if (commandQueue)
+      form.nowQueue = AttachCommand(form.nowQueue, commandQueue);
+    if (commandStack)
+      form.nowStack = AttachCommand(form.nowStack, commandStack);
   }
 };
 
@@ -150,6 +168,13 @@ onMounted(() => {
         /></label>
       </div>
     </div>
+    <label class="toggle-label">{{ power }}</label>
+    <div class="toggle-border">
+      <input id="one" type="checkbox" v-model="form.power" />
+      <label for="one">
+        <div class="handle"></div>
+      </label>
+    </div>
 
     <div class="result-wrapper">
       <h2>Result</h2>
@@ -208,12 +233,13 @@ onMounted(() => {
 <style scoped>
 .main-wrapper {
   width: 100%;
-  text-align: center;
+  text-align: -webkit-center;
 }
 
 .operation-wrapper {
   display: flex;
-  margin: 100px 50px;
+  margin: 100px 0;
+  justify-content: center;
 }
 
 .presets {
@@ -242,5 +268,84 @@ onMounted(() => {
 #queue,
 #stack {
   margin: 0 0 0 30px;
+}
+
+/* From uiverse.io */
+.toggle-border {
+  width: 60px;
+  border: 2px solid #f0ebeb;
+  border-radius: 130px;
+  margin-bottom: 45px;
+  padding: 1px 2px;
+  background: linear-gradient(to bottom right, white, rgba(220, 220, 220, 0.5)),
+    white;
+  box-shadow: 0 0 0 2px #fbfbfb;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.toggle-border:last-child {
+  margin-bottom: 0;
+}
+
+.toggle-border input[type="checkbox"] {
+  display: none;
+}
+
+.toggle-border label {
+  position: relative;
+  display: inline-block;
+  width: 65px;
+  height: 20px;
+  background: #d13613;
+  border-radius: 80px;
+  cursor: pointer;
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.3);
+  transition: background 0.5s;
+}
+
+.toggle-border input[type="checkbox"]:checked + label {
+  background: #13d162;
+}
+
+.handle {
+  position: absolute;
+  top: -8px;
+  left: -10px;
+  width: 35px;
+  height: 35px;
+  border: 1px solid #e5e5e5;
+  background: repeating-radial-gradient(
+      circle at 50% 50%,
+      rgba(200, 200, 200, 0.2) 0%,
+      rgba(200, 200, 200, 0.2) 2%,
+      transparent 2%,
+      transparent 3%,
+      rgba(200, 200, 200, 0.2) 3%,
+      transparent 3%
+    ),
+    conic-gradient(
+      white 0%,
+      silver 10%,
+      white 35%,
+      silver 45%,
+      white 60%,
+      silver 70%,
+      white 80%,
+      silver 95%,
+      white 100%
+    );
+  border-radius: 50%;
+  box-shadow: 3px 5px 10px 0 rgba(0, 0, 0, 0.4);
+  transition: left 0.4s;
+}
+
+.toggle-border input[type="checkbox"]:checked + label > .handle {
+  left: calc(100% - 35px + 10px);
+}
+
+.toggle-label {
+  font-size: 24px;
 }
 </style>
