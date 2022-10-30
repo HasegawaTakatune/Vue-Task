@@ -13,3 +13,6 @@ npm run dev
 ```  
 color=#8a2be2&&fontSize=24px&&message=Your self  
 ```  
+
+### 参照
+[トグルボタン スタイル](https://uiverse.io/detail/cssbuttons-io/mean-dolphin-24) >[アカウントページ](https://uiverse.io/profile/cssbuttons-io)  
