@@ -1,6 +1,6 @@
 export enum AttachType {
-    BOTH,
-    QUEUE,
-    STACK,
+    BOTH, // 両方
+    QUEUE, // キュー
+    STACK, // スタック
     LENGTH,
 }

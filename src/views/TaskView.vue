@@ -7,38 +7,52 @@ import type Operation from "./../components/ts/Command/interface/Operation";
 import type Form from "./interface/Form";
 import { AttachType } from "./enum/AttachType";
 
+// コマンド入力欄
 const inputCommand = ref();
 
+// フォーム
 const form = reactive(<Form>{
+  // 起動/停止フラグ
   power: false,
 
+  // キュークラス
   queue: new Queue(),
+  // スタッククラス
   stack: new Stack(),
 
+  // コマンドのアタッチ対象選択
   attachOf: AttachType.BOTH,
 
+  // プリセット適応フラグ
   presetColor: false,
   presetFontSize: false,
   presetMessage: false,
 
+  // 入力コマンド
   command: "",
 
+  // 現在のコマンド
   nowQueue: <Operation>{ color: "#8a2be2", fontSize: "24px", message: "Queue" },
   nowStack: <Operation>{ color: "#8a2be2", fontSize: "24px", message: "Stack" },
 });
 
+// アタッチ済みのキューコマンド表示
 const queues = computed(() => {
   return form.queue.Get();
 });
 
+// アタッチ済みのスタックコマンド表示
 const stacks = computed(() => {
   return form.stack.Get();
 });
 
+// 起動/停止の切り替え表示
 const power = computed(() => {
   return form.power ? "Start" : "Stop";
 });
 
+// コマンド入力完了イベント
+// 各配列にコマンドを追加していく
 const OnCommandEnter = () => {
   if (form.attachOf === AttachType.QUEUE || form.attachOf === AttachType.BOTH) {
     form.queue.Push(form.command);
@@ -49,6 +63,7 @@ const OnCommandEnter = () => {
   }
 };
 
+// 入力欄にデフォルト値を設定する
 const SetDefault = () => {
   let preset = "";
 
@@ -61,7 +76,9 @@ const SetDefault = () => {
   form.command = preset;
 };
 
+// コマンドをアタッチする
 const AttachCommand = (base: Operation, attach: Operation): Operation => {
+  // 入力されていないコマンドは、以前の状態を適応させる
   return {
     color: attach.color ?? base.color,
     fontSize: attach.fontSize ?? base.fontSize,
@@ -69,18 +86,23 @@ const AttachCommand = (base: Operation, attach: Operation): Operation => {
   };
 };
 
+// スリープ（遅延）
 const sleep = (waitTime: number) =>
   new Promise((resolve) => setTimeout(resolve, waitTime));
 
+// メインループ
 const main = async () => {
   while (true) {
     await sleep(10 * 1000);
 
+    // 停止中は処理しない
     if (!form.power) continue;
 
+    // コマンド取得
     const commandQueue = form.queue.Pop();
     const commandStack = form.stack.Pop();
 
+    // コマンドアタッチ
     if (commandQueue)
       form.nowQueue = AttachCommand(form.nowQueue, commandQueue);
     if (commandStack)
@@ -89,6 +111,7 @@ const main = async () => {
 };
 
 onMounted(() => {
+  // メインループ呼び出し
   main();
 });
 </script>
