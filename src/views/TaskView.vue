@@ -93,7 +93,7 @@ const sleep = (waitTime: number) =>
 // メインループ
 const main = async () => {
   while (true) {
-    await sleep(10 * 1000);
+    await sleep(3 * 1000);
 
     // 停止中は処理しない
     if (!form.power) continue;
